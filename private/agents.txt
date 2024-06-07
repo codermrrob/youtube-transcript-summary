@@ -1,0 +1,431 @@
+All right.
+0:00
+So in this video, I want to talk about the five problems that I keep seeing
+0:05
+again and again that people face of getting their agents good enough
+0:09
+to basically put into production.
+0:12
+I get a lot of questions about in regards to frameworks around this.
+0:16
+And while I'm trying to be sort of reasonably framework agnostic
+0:20
+here, certainly some of these things apply a lot more to some
+0:23
+frameworks than to other frameworks.
+0:26
+So one of the things that came up recently was someone asked me about
+0:28
+putting CrewAI into production.
+0:31
+And my comment was that I actually would never currently put CrewAI into production
+0:36
+based on the fact that, there were so many issues with it that I wouldn't trust it.
+0:42
+Putting things like LangGraph into production that's
+0:44
+certainly much more reliable.
+0:47
+but I think you've got some of these problems with all of the different
+0:51
+agent frameworks if you're not aware of them and if you're not
+0:54
+thinking about how to basically fix these problems as we go through.
+Reliability
+0:58
+So let's dive into this.
+1:00
+By far the number one problem for all of agents out there
+1:04
+at the moment is reliability.
+1:07
+So talking to a lot of startups, talking to a lot of companies that
+1:10
+want to do agents the thing I'm seeing consistently is that companies are very
+1:15
+reluctant to do agents, for anything really complicated just because the
+1:20
+reliability of the agents is so low.
+1:23
+While your typical company wants five nines of reliability, they'd probably
+1:27
+even settle for, two nines of reliability, meaning 99%, but most agents are
+1:33
+probably at best getting around 60, 70 percent of being able to do things.
+1:39
+Now, there are some places where maybe that's okay, but for the majority
+1:43
+of things, getting something into production, you have to make it reliable.
+1:47
+You have to be able to make it consistently be able to produce
+1:51
+an output that the end user would be able to benefit from.
+1:56
+That the end result would be able to, be like they expect it to
+2:00
+be and something that they can benefit from and actually use it.
+2:04
+there's no use of creating agents that only work some of the time, and then end
+2:10
+up failing a large percentage of the time.
+2:13
+The issue that creates is the whole issue of humans then having to basically
+2:18
+check every single thing in the agent.
+2:21
+Now that's fine if you're, starting out and you're trying to make training
+2:25
+data or something like that, and you've got a human in the loop and
+2:28
+you're doing that kind of thing.
+2:29
+but really what we want for agents eventually is we want to be able
+2:33
+to be fully autonomous, to be fully operating by themselves, producing a
+2:37
+consistent level of result, without a human having to be in the loop there.
+2:43
+So this brings us to some of the things that actually go wrong.
+Excessive Loops
+2:46
+So the second thing that I see happening a lot is, agents going into
+2:50
+excessively long loops and this can be for a variety of different reasons.
+2:54
+But it's quite common to see this in CrewAI and some of the other frameworks.
+2:59
+, where you'll have it set up and the agents will basically not like the
+3:04
+output , either of a tool, which can be one of the ways that this happens quite
+3:09
+often is a failing tool or a tool that sort of just don't working in some way.
+3:14
+the other way too, though, is that where the LLMs basically, get a response out
+3:19
+from one sub agent to the next part.
+3:23
+And it just decides that no, it needs to do that part again.
+3:26
+And it just gets into this loop of going through it again and again and again.
+3:30
+Now this is one of the frustrations I've felt a lot with CrewAI
+3:34
+and with some of the others.
+3:35
+with LangGraph, what I actually do is I sort of hard code it so that we kind
+3:40
+of know how many steps it's taking.
+3:43
+Now CrewAI has actually, set up a thing also that does something like that
+3:47
+nowadays too where you can actually limit the number of steps that it
+3:50
+goes through or repeats and retries that it does for this kind of thing.
+3:55
+But this is a very common pattern that you see with LLM agents, that
+3:58
+they get into these kind of loops.
+4:01
+And a lot of what you have to think about when you're architecting an agent is
+4:05
+actually how to handle any of these loops.
+4:08
+ideally you want to reduce them to none.
+4:11
+but if they do happen, you want to make sure that your overall sort of agent or
+4:17
+system is aware that they're happening.
+4:19
+And then puts a stop to them pretty quickly.
+4:22
+Otherwise, you find that you end up just getting an agent, just going
+4:25
+on, making LLM call off the LLM call.
+4:28
+And if it is, fully autonomous where you're not watching that, they can get
+4:32
+very expensive very quickly if you're using an expensive model or something
+Tools
+4:36
+The third problem that can go wrong is around tools.
+4:39
+Now, tools is something that I've been meaning to make a
+4:41
+lot more videos about, in here.
+4:44
+In the previous section, I talked about failing tools.
+4:47
+And this is something that happens a lot, that I feel like
+4:49
+people are often not aware of.
+4:51
+while the tools in things like LangChain, a pretty nice for starting out, you're
+4:57
+gonna find that you want to customize them a lot to your specific use case.
+5:02
+you need to understand that a lot of those tools were made over a year ago.
+5:06
+They were very simple at the time.
+5:08
+They're not really made for agents a lot.
+5:11
+They're often made more for use in sort of RAG than agentic stuff.
+5:16
+and you really find that what you want to do is basically make
+5:19
+your own set of custom tools.
+5:22
+Now I will follow up with a video talking a bit about custom tools,
+5:25
+but I will say that, tools are really your agents sort of secret sauce.
+5:30
+if you got a really good set of tools that basically can filter inputs
+5:36
+can use inputs in the right way.
+5:38
+can generate outputs that are going to be beneficial to the actual LLMs.
+5:43
+So really the whole tools thing is all about how do you get data?
+5:48
+how do you manipulate data?
+5:50
+And how do you prepare it for an LLM?
+5:52
+And then when it fails, how does the tool basically tell the LLM that it's
+5:57
+failed in a way that, is actually going to be beneficial Rather than
+6:01
+going into an endless loop in here.
+6:04
+So you can see for often really simple things, I will make quite complex tools.
+6:09
+This is an example of a webpage diffing tool, just to check, basically the
+6:14
+outputs of a web page so then an agent can tell when a web page has been updated.
+6:19
+So for example, this was a simple use of the tool for basically checking,
+6:24
+if OpenAI's webpage had been updated.
+6:27
+it could then basically assess what new links were there, and then
+6:31
+be able to go to those new links.
+6:33
+and find out what had been announced for, returning news,
+6:37
+returning different kinds of things.
+6:38
+Now the same kind of thing, worked nicely on sites like CNN and other
+6:41
+news sites and stuff like that.
+6:43
+The idea here though, is that this is a very custom tool
+6:47
+for a very specific use case.
+6:49
+And that's how you want to think about most of the things that you're doing.
+6:52
+When I look at some of the best, agents that I see companies doing, they've
+6:56
+generally got very specific tools that, they are able to sort of handle,
+7:01
+different kinds of input, work out what they need to do to generate data,
+7:06
+et cetera, provide that back to the agent in a way that's useful so that
+7:11
+the agent can know what's going on.
+7:14
+one of the sort of classic examples is if you look at a lot of the simple
+7:18
+search tools while they'll return information about, what's on the page,
+7:23
+they don't actually provide the URL.
+7:26
+so you want to sort of go through and customize some of those things so that
+7:29
+you're actually getting the URL back.
+7:31
+You're storing those URLs.
+7:33
+You'll then basically, caching any response to that URL.
+7:38
+So, if you're scraping that URL, then you're caching it so that your
+7:41
+agent can basically use that cache again and again, without having to
+7:45
+do any kind of, repeating itself of calling these different things.
+7:49
+this is a whole class of what I would call sort of intelligent tools
+7:53
+that you want to build in here.
+7:54
+All right.
+7:55
+Th this brings us to the fourth problem that I see a lot is the
+7:58
+whole idea of self-checking.
+Self-checking
+8:01
+you need your agent to have some thing or some way of being able to check
+8:08
+its outputs and see, is it generating outputs that are useful or not useful?
+8:13
+the classic example of this would be, with code examples.
+8:17
+So if you got an agent that you've got, that's actually generating code,
+8:22
+you want to make sure that at some point, that code is checked and that
+8:26
+might be as simple as running a unit test on it to see, do all the imports
+8:31
+work, do the functions actually run, and return what I expect for them.
+8:36
+You want to set up some tests for things like that So that you can
+8:39
+actually check the output of the code that the agent is actually generating.
+8:44
+Now in lots of other use cases, you're not going to be generating code.
+8:48
+So you need to think about in those sort of situations, how will your agent
+8:53
+have the ability to know if something is right versus if something is wrong,
+8:57
+how can it check to see that this is something that's going to be useful versus
+9:01
+something that's just going to be totally off base of what the end user wants?
+9:06
+and that can be things like, checking URLs, LLMs loved hallucinate URLs.
+9:12
+So check, do those URLs actually exists?
+9:14
+Do they not exist?
+9:15
+That kind of thing that you want to think about as you're going through,
+9:18
+but this idea of self checking is a really sort of key thing.
+Lack of Explainability
+9:22
+The last thing, I think that you need to think about a lot and that
+9:26
+I see as a big problem with LLM agents is the lack of explainability.
+9:31
+So you really want to think about when the user actually gets a result
+9:34
+back at the end from an agent.
+9:37
+Can the agent sort of point to some explanation?
+9:40
+Now this could be citations is a great way of doing this.
+9:43
+citations showing exactly where the information that used to basically make
+9:48
+a decision or to do something, was,
+9:51
+That gives people a lot more confidence in the output of the agent when
+9:54
+they can see why the agent said something, or why the agent gave a
+9:59
+certain result, that kind of thing.
+10:01
+It can also be things like, being able to look at a set of log files
+10:05
+or look at a set of outputs that the agent made along the way.
+Bonus: Debugging an Agent
+10:09
+So this brings us to sort of like the sixth of the bonus sort
+10:12
+of thing that you need to think of, which is debugging an agent.
+10:16
+you need to have some kind of outputs or some kind of logs that are kind
+10:21
+of intelligent and not just purely calling the LLMs and the agents.
+10:24
+That's one way of doing it, but can be very tedious way of going through.
+10:28
+You need to be able to assess at which point does the agent start to fall apart?
+10:33
+Now, remember a lot of this stuff.
+10:35
+if you're using the LLM agent, you should be using that to basically make decisions.
+10:40
+And perhaps generate, tokens out, as either text or as code or something
+10:45
+like that but mostly what you're using the reasoning part of an LLM
+10:50
+agent is to be able to make decisions is to be able to see these things.
+10:54
+Now you want to make sure that's something that gets logged
+10:58
+independently that's quite easy for you to see, ah, okay, this looks a
+11:03
+bit suspicious what's going on here?
+11:05
+Can we debug this?
+11:06
+We can look at the reasoning points in the agent as we go along.
+11:11
+So these things I think are things that you need to be thinking about constantly
+11:15
+when you're doing anything with LLM agents, autonomous agents in here.
+11:19
+far too often, I see people doing stuff that actually, you don't even need an
+11:24
+LLM, to do some of these things, you can just basically, sequence them up
+11:28
+. There's no need for any sort of decision point or something like that in there.
+11:32
+make sure that, when you're building your agent, you want it to have as few decision
+11:37
+points as possible to get the outcome that you want to be able to achieve with this.
+11:42
+So go back and assess some of your own agents and look at it and think
+11:46
+about, okay, where are the points of decision, going on in here?
+11:51
+And how am I checking to make sure that each of these things is being conformed
+11:56
+to, so that you do get the actual sort of reliability out of these things.
+12:02
+Are we making a bunch more videos of looking at building things with
+12:06
+LangGraph, even with things like CrewAI.
+12:09
+Even though, I don't think CrewAI is ideal for production.
+12:13
+I think it's great for trying ideas out really quickly.
+12:17
+I'll show you some sort of things that I've been doing with that To
+12:19
+be able to build some of these crews really quickly and try out ideas and
+12:24
+get a sense of what is probably going to work, what is not going to work.
+12:28
+and then look at, more about how converting them across to much more
+12:32
+sort of low level code things like LangGraph, things like just coding
+12:37
+some of these things in plain Python.
+12:39
+Often you don't need a framework to do some of these things.
+12:42
+and that's something that I want to go into more in the
+12:45
+future as we go through this.
+12:46
+Anyway, hopefully this video was useful to get you thinking about
+12:49
+the key things that go wrong in getting LLM agents into production.
+12:54
+And how you can start just think about mitigating some of these
+12:57
+problems that you come across.
+12:59
+As always, if you've got comments or questions, please
+13:02
+put them in the comments below.
+13:03
+If you found the video useful, please click like and subscribe.
+13:07
+And I will talk to you in the next video.
+13:09
+Bye for now.
