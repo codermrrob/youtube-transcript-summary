@@ -75,4 +75,6 @@ Followed by title, author (channel) and the summary.
 
 This iteration is super simple. The next steps are to use code to configure & update an assistant for YouTube summaries. Deploy the transcript scraper and the metadata fetcher as tools for the assistant to use. Provide more detailed instructions and work on consistency and hallucination reduction.
 
+This is not possible with the Jan model runner yet, the assistants API is still in development, so I will probably switch to something like llama3 on Groq. But I really like the idea of running my assistants locally and simple stuff like this is easily handled by the 8bn size of model.
+
 Of course using a bigger model will improve things but so long as there is an open ai compatible API you can use this code with any model.
