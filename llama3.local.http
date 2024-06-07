@@ -1,0 +1,33 @@
+
+###
+POST http://localhost:1338/v1/chat/completions
+Content-Type: application/json
+
+{
+  "model": "llama3-8b-instruct",
+  "messages": [
+    {
+      "content": "You are a helpful assistant.",
+      "role": "system"
+    },
+    {
+      "content": "Hello!",
+      "role": "user"
+    }
+  ],
+  "stream": true,
+  "max_tokens": 2048,
+  "stop": [
+    "hello"
+  ],
+  "frequency_penalty": 0,
+  "presence_penalty": 0,
+  "temperature": 0.7,
+  "top_p": 0.95
+}
+
+
+###
+GET http://localhost:1338/v1/models/llama3-8b-instruct
+
+
